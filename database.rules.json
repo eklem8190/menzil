@@ -1,0 +1,36 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "users": {
+      ".read": "auth != null",
+      "$uid": {
+        ".write": "auth != null && auth.uid === $uid",
+        ".validate": "newData.hasChildren(['name'])",
+        "name": { ".validate": "newData.isString() && newData.val().length <= 80" },
+        "city": { ".validate": "newData.isString() && newData.val().length <= 60" },
+        "$other": { ".validate": false }
+      }
+    },
+    "general": {
+      ".read": "auth != null",
+      "$msg": {
+        ".write": "auth != null && !data.exists()",
+        ".validate": "newData.hasChildren(['f','t','d']) && newData.child('f').val() === auth.uid && newData.child('t').isString() && newData.child('t').val().length > 0 && newData.child('t').val().length <= 300 && newData.child('d').isNumber()",
+        "$other": { ".validate": false }
+      }
+    },
+    "dm": {
+      "$a": {
+        "$b": {
+          ".read": "auth != null && (auth.uid === $a || auth.uid === $b)",
+          "$msg": {
+            ".write": "auth != null && (auth.uid === $a || auth.uid === $b) && !data.exists()",
+            ".validate": "newData.hasChildren(['f','t','d']) && newData.child('f').val() === auth.uid && newData.child('t').isString() && newData.child('t').val().length > 0 && newData.child('t').val().length <= 300 && newData.child('d').isNumber()",
+            "$other": { ".validate": false }
+          }
+        }
+      }
+    }
+  }
+}
